@@ -2,11 +2,11 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "./styles.css";
 
-import {Square} from "./App";
+import * as App from "./App";
 
 ReactDOM.render(
     <React.StrictMode>
-        <Square />
+        <App.Board />
     </React.StrictMode>,
     document.getElementById("root")
 )
