@@ -1,11 +1,11 @@
 import React from "react";
 import "./styles.css";
 
-const Square: React.FunctionComponent<{ value: number }> = (props) => {
-  return (<button className="square">{props.value}</button>)
+const Square: React.FunctionComponent<{ value: number }> = ({ value }) => {
+  return (<button className="square">{value}</button>);
 }
 
-const Board: React.FunctionComponent<{}> = (props) => {
+const Board: React.FunctionComponent<{}> = () => {
   return (
     <>
       <div className="board-row">
