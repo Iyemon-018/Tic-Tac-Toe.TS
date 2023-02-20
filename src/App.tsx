@@ -5,7 +5,7 @@ const Square: React.FunctionComponent<{ value: string, onSquareClick: React.Mous
   return (<button className="square" onClick={onSquareClick}>{value}</button>);
 }
 
-const Board: React.FunctionComponent<{xIsNext: boolean, squares: string[], onPlay: (nextSquares: string[]) => void}> = (props) =>{
+const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPlay: (nextSquares: string[]) => void }> = (props) => {
   /**
    * 正方形をクリックしたときのクリックイベントです。
    * クリックした正方形のマスにマークを描き、プレイヤーの攻撃順序を進めます。
@@ -59,21 +59,40 @@ const Board: React.FunctionComponent<{xIsNext: boolean, squares: string[], onPla
 export default function Game() {
   // プレイヤー順序を識別するための値です。
   // true: 先攻, false: 後攻
-  const [xIsNext, setXIsNext] = useState(true);
+  const [xIsNext, setXIsNext] = useState<boolean>(true);
 
   // 各正方形マスの状態を保持する。
   // 9=取りうる最大の手数 となる。
-  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [history, setHistory] = useState<string[][]>([Array(9).fill(null)]);
 
-  const currentSquares = history[history.length - 1];
+  // 初手を0としたプレイヤーの順番を示す値です。
+  const [currentMove, setCurrentMove] = useState<number>(0);
 
-  function handlePlay(nextSquare: string[]){
-    setHistory([...history, nextSquare]);
+  // 現在の履歴情報です。
+  const currentSquares: string[] = history[currentMove];
+
+  /**
+   * ゲームの手順が実行された際に呼ばれるイベントハンドラです。
+   * @param nextSquares プレイヤーが操作したあとの正方形マスの状態です。
+   */
+  function handlePlay(nextSquares: string[]): void {
+    // これまでの履歴を保持する。
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+
+    setHistory([...history, nextSquares]);
+    setCurrentMove(nextHistory.length - 1);
     setXIsNext(!xIsNext);
   }
 
-  function jumpTo(move: number): void {
-    throw new Error("Function not implemented.");
+  /**
+   * 当該履歴を表示します。
+   * @param nextMove ジャンプ先の履歴インデックスを指定します。
+   */
+  function jumpTo(nextMove: number): void {
+    setCurrentMove(nextMove);
+
+    // 表示した履歴から継続できるようにプレイヤーの順序も更新する。
+    setXIsNext(nextMove % 2 === 0);
   }
 
   // 履歴の選択ボタンリストを表示する JSX オブジェクト
@@ -91,7 +110,7 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
