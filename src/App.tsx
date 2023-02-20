@@ -27,7 +27,7 @@ const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPl
 
     // 勝利 or ゲーム続行 で現在の状態を表現する。
     const winner = calculateWinner(squares);
-    let status = winner
+    const status = winner
       ? 'Winner: ' + winner
       : 'Next player: ' + (xIsNext ? 'X' : '0');
 
@@ -44,7 +44,7 @@ const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPl
                   // 左から列0～2と定義する。
                   [...Array(3)].map((__, column) => {
                     // 行列のインデックスをマス目のインデックスへ変換し、正方形をレンダリングする。
-                    let i = (row * 3) + column;
+                    const i = (row * 3) + column;
                     return <Square key={column} value={squares[i]} onSquareClick={() => handleSquareClick(i)} />;
                   })
                 }
