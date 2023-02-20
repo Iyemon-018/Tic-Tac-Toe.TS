@@ -6,12 +6,34 @@ const Square: React.FunctionComponent<{ value: string, onSquareClick: React.Mous
 }
 
 const Board: React.FunctionComponent<{}> = () => {
+  // プレイヤー順序を識別するための値です。
+  // true: 先攻, false: 後攻
+  const [xIsNext, setXIsNext] = useState(true);
+
+  // それぞれの正方形に表示されるマーク配列です。
+  // 左上を0とし、右下に向かって最大8まで存在します。
   const [squares, setSquares] = useState<Array<string>>(Array(9).fill(null));
 
+  /**
+   * 正方形をクリックしたときのクリックイベントです。
+   * クリックした正方形のマスにマークを描き、プレイヤーの攻撃順序を進めます。
+   * @param i クリックした正方形の位置インデックスを指定してください。
+   */
   function handleSquareClick(i: number): void {
+    if (squares[i]) {
+      // すでに当該マスにマークがあるので操作不可とする。
+      return;
+    }
+
     const nextSquares: Array<string> = squares.slice();
-    nextSquares[i] = 'X';
+
+    if (xIsNext) {
+      nextSquares[i] = 'X';
+    } else {
+      nextSquares[i] = 'O';
+    }
     setSquares(nextSquares);
+    setXIsNext(!xIsNext);
   }
 
   return (
