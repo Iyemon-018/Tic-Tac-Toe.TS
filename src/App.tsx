@@ -99,7 +99,16 @@ export default function Game() {
   // ゲームが進むごとに履歴を蓄積し、ボタンでどの履歴であるかを表現する。
   // ボタンをクリックすると当該履歴の状態に戻す。
   const moves = history.map((squares, move) => {
-    let description = move > 0 ? 'Go to move #' + move : 'Go to game start';
+    let description;
+
+    if (move === 0) {
+      description = 'Go to game start';
+    } else if (move === currentMove) {
+      description = 'You are at move #' + move;
+    } else {
+      description = 'Go to move #' + move;
+    }
+    
     return (
       <li key={move}>
         <button onClick={() => jumpTo(move)}>{description}</button>
