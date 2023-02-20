@@ -27,27 +27,31 @@ const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPl
 
     // 勝利 or ゲーム続行 で現在の状態を表現する。
     const winner = calculateWinner(squares);
-    let status = winner ? 'Winner: ' + winner
-      : 'Next player: ' + (xIsNext ? 'X' : '0');
+    let status = winner
+                  ? 'Winner: ' + winner
+                  : 'Next player: ' + (xIsNext ? 'X' : '0');
 
     return (
       <>
         <div className="status">{status}</div>
-        <div className="board-row">
-          <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)} />
-          <Square value={squares[1]} onSquareClick={() => handleSquareClick(1)} />
-          <Square value={squares[2]} onSquareClick={() => handleSquareClick(2)} />
-        </div>
-        <div className="board-row">
-          <Square value={squares[3]} onSquareClick={() => handleSquareClick(3)} />
-          <Square value={squares[4]} onSquareClick={() => handleSquareClick(4)} />
-          <Square value={squares[5]} onSquareClick={() => handleSquareClick(5)} />
-        </div>
-        <div className="board-row">
-          <Square value={squares[6]} onSquareClick={() => handleSquareClick(6)} />
-          <Square value={squares[7]} onSquareClick={() => handleSquareClick(7)} />
-          <Square value={squares[8]} onSquareClick={() => handleSquareClick(8)} />
-        </div>
+        {
+          // 9マスの正方形を描く。
+          // 上から行0～2と定義する。ここでは行単位でレンダリングする。
+          [...Array(3)].map((_, row) => {
+            return (
+              <div className="board-row">
+                {
+                  // 左から列0～2と定義する。
+                  [...Array(3)].map((__, column) => {
+                    // 行列のインデックスをマス目のインデックスへ変換し、正方形をレンダリングする。
+                    let i = (row * 3) + column;
+                    return <Square value={squares[i]} onSquareClick={() => handleSquareClick(i)} />;
+                  })
+                }
+              </div>
+            );
+          })
+        }
       </>
     );
   }
@@ -108,7 +112,7 @@ export default function Game() {
     } else {
       description = 'Go to move #' + move;
     }
-    
+
     return (
       <li key={move}>
         <button onClick={() => jumpTo(move)}>{description}</button>
