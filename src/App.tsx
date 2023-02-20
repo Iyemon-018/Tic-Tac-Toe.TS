@@ -20,8 +20,9 @@ const Board: React.FunctionComponent<{}> = () => {
    * @param i クリックした正方形の位置インデックスを指定してください。
    */
   function handleSquareClick(i: number): void {
-    if (squares[i]) {
+    if (squares[i] || calculateWinner(squares)) {
       // すでに当該マスにマークがあるので操作不可とする。
+      // または勝利が確定している場合はそれ以上ゲーム終了とする。
       return;
     }
 
@@ -36,8 +37,14 @@ const Board: React.FunctionComponent<{}> = () => {
     setXIsNext(!xIsNext);
   }
 
+  // 勝利 or ゲーム続行 で現在の状態を表現する。
+  const winner = calculateWinner(squares);
+  let status = winner ? 'Winner: ' + winner
+    : 'Next player: ' + (xIsNext ? 'X' : '0');
+
   return (
     <>
+      <div className="status">{status}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleSquareClick(1)} />
@@ -55,6 +62,36 @@ const Board: React.FunctionComponent<{}> = () => {
       </div>
     </>
   );
+}
+
+/**
+ * 指定した状態から勝者が確定しているかどうかを判断します。
+ * @param squares 現在の正方形に設定されたマーク文字列の配列を指定してください。
+ * @returns 勝者が確定している場合は、そのプレイヤーのマーク文字列を返します。
+ *          確定していない場合は、null を返します。
+ */
+function calculateWinner(squares: Array<string>): string | null {
+  // 勝利と判断される正方形マスのパターンを定義する。
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a]
+      && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+
+  return null;
 }
 
 export { Board };
