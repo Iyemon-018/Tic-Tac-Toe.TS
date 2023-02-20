@@ -72,13 +72,29 @@ export default function Game() {
     setXIsNext(!xIsNext);
   }
 
+  function jumpTo(move: number): void {
+    throw new Error("Function not implemented.");
+  }
+
+  // 履歴の選択ボタンリストを表示する JSX オブジェクト
+  // ゲームが進むごとに履歴を蓄積し、ボタンでどの履歴であるかを表現する。
+  // ボタンをクリックすると当該履歴の状態に戻す。
+  const moves = history.map((squares, move) => {
+    let description = move > 0 ? 'Go to move #' + move : 'Go to game start';
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    )
+  });
+
   return (
     <div className="game">
       <div className="game-board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
       </div>
       <div className="game-info">
-        <ol>{/*TODO*/}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   );
