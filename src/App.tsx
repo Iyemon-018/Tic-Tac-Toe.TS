@@ -28,8 +28,8 @@ const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPl
     // 勝利 or ゲーム続行 で現在の状態を表現する。
     const winner = calculateWinner(squares);
     let status = winner
-                  ? 'Winner: ' + winner
-                  : 'Next player: ' + (xIsNext ? 'X' : '0');
+      ? 'Winner: ' + winner
+      : 'Next player: ' + (xIsNext ? 'X' : '0');
 
     return (
       <>
