@@ -39,13 +39,13 @@ const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPl
           // 上から行0～2と定義する。ここでは行単位でレンダリングする。
           [...Array(3)].map((_, row) => {
             return (
-              <div className="board-row">
+              <div key={row} className="board-row">
                 {
                   // 左から列0～2と定義する。
                   [...Array(3)].map((__, column) => {
                     // 行列のインデックスをマス目のインデックスへ変換し、正方形をレンダリングする。
                     let i = (row * 3) + column;
-                    return <Square value={squares[i]} onSquareClick={() => handleSquareClick(i)} />;
+                    return <Square key={column} value={squares[i]} onSquareClick={() => handleSquareClick(i)} />;
                   })
                 }
               </div>
