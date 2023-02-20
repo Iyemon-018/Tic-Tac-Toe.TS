@@ -1,56 +1,52 @@
 import React, { useState } from "react";
 import "./styles.css";
 
-const Square: React.FunctionComponent<{ value: string, onSquareClick: React.MouseEventHandler<HTMLButtonElement> }> = ({ value, onSquareClick }) => {
+const Square: React.FunctionComponent<{ value: string | null, onSquareClick: React.MouseEventHandler<HTMLButtonElement> }> = ({ value, onSquareClick }) => {
   return (<button className="square" onClick={onSquareClick}>{value}</button>);
 }
 
-const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPlay: (nextSquares: string[]) => void }> = (props) => {
+const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPlay: (nextSquares: string[]) => void }>
+  = ({xIsNext, squares, onPlay}) => {
   /**
    * 正方形をクリックしたときのクリックイベントです。
    * クリックした正方形のマスにマークを描き、プレイヤーの攻撃順序を進めます。
    * @param i クリックした正方形の位置インデックスを指定してください。
    */
   function handleSquareClick(i: number): void {
-    if (props.squares[i] || calculateWinner(props.squares)) {
+    if (squares[i] || calculateWinner(squares)) {
       // すでに当該マスにマークがあるので操作不可とする。
       // または勝利が確定している場合はそれ以上ゲーム終了とする。
       return;
     }
 
-    const nextSquares: string[] = props.squares.slice();
+    const nextSquares: string[] = squares.slice();
+    nextSquares[i] = xIsNext ? 'X' : '0';
 
-    if (props.xIsNext) {
-      nextSquares[i] = 'X';
-    } else {
-      nextSquares[i] = 'O';
-    }
-
-    props.onPlay(nextSquares);
+    onPlay(nextSquares);
   }
 
   // 勝利 or ゲーム続行 で現在の状態を表現する。
-  const winner = calculateWinner(props.squares);
+  const winner = calculateWinner(squares);
   let status = winner ? 'Winner: ' + winner
-    : 'Next player: ' + (props.xIsNext ? 'X' : '0');
+    : 'Next player: ' + (xIsNext ? 'X' : '0');
 
   return (
     <>
       <div className="status">{status}</div>
       <div className="board-row">
-        <Square value={props.squares[0]} onSquareClick={() => handleSquareClick(0)} />
-        <Square value={props.squares[1]} onSquareClick={() => handleSquareClick(1)} />
-        <Square value={props.squares[2]} onSquareClick={() => handleSquareClick(2)} />
+        <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)} />
+        <Square value={squares[1]} onSquareClick={() => handleSquareClick(1)} />
+        <Square value={squares[2]} onSquareClick={() => handleSquareClick(2)} />
       </div>
       <div className="board-row">
-        <Square value={props.squares[3]} onSquareClick={() => handleSquareClick(3)} />
-        <Square value={props.squares[4]} onSquareClick={() => handleSquareClick(4)} />
-        <Square value={props.squares[5]} onSquareClick={() => handleSquareClick(5)} />
+        <Square value={squares[3]} onSquareClick={() => handleSquareClick(3)} />
+        <Square value={squares[4]} onSquareClick={() => handleSquareClick(4)} />
+        <Square value={squares[5]} onSquareClick={() => handleSquareClick(5)} />
       </div>
       <div className="board-row">
-        <Square value={props.squares[6]} onSquareClick={() => handleSquareClick(6)} />
-        <Square value={props.squares[7]} onSquareClick={() => handleSquareClick(7)} />
-        <Square value={props.squares[8]} onSquareClick={() => handleSquareClick(8)} />
+        <Square value={squares[6]} onSquareClick={() => handleSquareClick(6)} />
+        <Square value={squares[7]} onSquareClick={() => handleSquareClick(7)} />
+        <Square value={squares[8]} onSquareClick={() => handleSquareClick(8)} />
       </div>
     </>
   );
@@ -76,10 +72,14 @@ export default function Game() {
    * @param nextSquares プレイヤーが操作したあとの正方形マスの状態です。
    */
   function handlePlay(nextSquares: string[]): void {
-    // これまでの履歴を保持する。
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    // 現時点までの履歴を保持する。
+    // 履歴をこの値で更新することで、現在履歴以降の履歴情報はクリアされることになる。
+    const currentHistory = history.slice(0, currentMove + 1);
 
-    setHistory([...history, nextSquares]);
+    // 現在進めた手順を加えた新しい手順がこれ。
+    const nextHistory = [...currentHistory, nextSquares];
+
+    setHistory([...currentHistory, nextSquares]);
     setCurrentMove(nextHistory.length - 1);
     setXIsNext(!xIsNext);
   }
@@ -127,7 +127,7 @@ export default function Game() {
  */
 function calculateWinner(squares: string[]): string | null {
   // 勝利と判断される正方形マスのパターンを定義する。
-  const lines = [
+  const lines: number[][] = [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
