@@ -6,51 +6,51 @@ const Square: React.FunctionComponent<{ value: string | null, onSquareClick: Rea
 }
 
 const Board: React.FunctionComponent<{ xIsNext: boolean, squares: string[], onPlay: (nextSquares: string[]) => void }>
-  = ({xIsNext, squares, onPlay}) => {
-  /**
-   * 正方形をクリックしたときのクリックイベントです。
-   * クリックした正方形のマスにマークを描き、プレイヤーの攻撃順序を進めます。
-   * @param i クリックした正方形の位置インデックスを指定してください。
-   */
-  function handleSquareClick(i: number): void {
-    if (squares[i] || calculateWinner(squares)) {
-      // すでに当該マスにマークがあるので操作不可とする。
-      // または勝利が確定している場合はそれ以上ゲーム終了とする。
-      return;
+  = ({ xIsNext, squares, onPlay }) => {
+    /**
+     * 正方形をクリックしたときのクリックイベントです。
+     * クリックした正方形のマスにマークを描き、プレイヤーの攻撃順序を進めます。
+     * @param i クリックした正方形の位置インデックスを指定してください。
+     */
+    function handleSquareClick(i: number): void {
+      if (squares[i] || calculateWinner(squares)) {
+        // すでに当該マスにマークがあるので操作不可とする。
+        // または勝利が確定している場合はそれ以上ゲーム終了とする。
+        return;
+      }
+
+      const nextSquares: string[] = squares.slice();
+      nextSquares[i] = xIsNext ? 'X' : '0';
+
+      onPlay(nextSquares);
     }
 
-    const nextSquares: string[] = squares.slice();
-    nextSquares[i] = xIsNext ? 'X' : '0';
+    // 勝利 or ゲーム続行 で現在の状態を表現する。
+    const winner = calculateWinner(squares);
+    let status = winner ? 'Winner: ' + winner
+      : 'Next player: ' + (xIsNext ? 'X' : '0');
 
-    onPlay(nextSquares);
+    return (
+      <>
+        <div className="status">{status}</div>
+        <div className="board-row">
+          <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)} />
+          <Square value={squares[1]} onSquareClick={() => handleSquareClick(1)} />
+          <Square value={squares[2]} onSquareClick={() => handleSquareClick(2)} />
+        </div>
+        <div className="board-row">
+          <Square value={squares[3]} onSquareClick={() => handleSquareClick(3)} />
+          <Square value={squares[4]} onSquareClick={() => handleSquareClick(4)} />
+          <Square value={squares[5]} onSquareClick={() => handleSquareClick(5)} />
+        </div>
+        <div className="board-row">
+          <Square value={squares[6]} onSquareClick={() => handleSquareClick(6)} />
+          <Square value={squares[7]} onSquareClick={() => handleSquareClick(7)} />
+          <Square value={squares[8]} onSquareClick={() => handleSquareClick(8)} />
+        </div>
+      </>
+    );
   }
-
-  // 勝利 or ゲーム続行 で現在の状態を表現する。
-  const winner = calculateWinner(squares);
-  let status = winner ? 'Winner: ' + winner
-    : 'Next player: ' + (xIsNext ? 'X' : '0');
-
-  return (
-    <>
-      <div className="status">{status}</div>
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleSquareClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleSquareClick(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleSquareClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleSquareClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleSquareClick(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleSquareClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleSquareClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleSquareClick(8)} />
-      </div>
-    </>
-  );
-}
 
 export default function Game() {
   // プレイヤー順序を識別するための値です。
